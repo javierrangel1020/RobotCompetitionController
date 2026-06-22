@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:joystick/constants.dart';
 
 class BluetoothDeviceListEntry extends ListTile {
   BluetoothDeviceListEntry({
-    required BluetoothDevice device,
+    required String name,
+    required String address,
     int? rssi,
+    bool isConnected = false,
     GestureTapCallback? onTap,
     GestureLongPressCallback? onLongPress,
     bool enabled = true,
@@ -14,11 +15,11 @@ class BluetoothDeviceListEntry extends ListTile {
           onLongPress: onLongPress,
           enabled: enabled,
           title: Text(
-            device.name ?? "",
+            name.isNotEmpty ? name : "(sin nombre)",
             style: kTitleText,
           ),
           subtitle: Text(
-            device.address.toString(),
+            address,
             style: kSubtitleText,
           ),
           trailing: Row(
@@ -39,11 +40,8 @@ class BluetoothDeviceListEntry extends ListTile {
                       ),
                     )
                   : Container(width: 0, height: 0),
-              device.isConnected
+              isConnected
                   ? const Icon(Icons.import_export, color: Colors.white)
-                  : Container(width: 0, height: 0),
-              device.isBonded
-                  ? const Icon(Icons.link, color: Colors.white)
                   : Container(width: 0, height: 0),
             ],
           ),

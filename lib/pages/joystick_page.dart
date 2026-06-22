@@ -1,12 +1,14 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:joystick/constants.dart';
+import 'package:joystick/models/bluetooth_interface.dart';
 import 'package:joystick/pages/settings_page.dart';
 import 'package:joystick/widgets/color_picker.dart';
 import 'package:joystick/widgets/horizontal_joystick.dart';
 import 'package:joystick/widgets/indicator.dart';
 import 'package:joystick/widgets/vertical_joystick.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:fullscreen/fullscreen.dart';
+import 'package:joystick/l10n/app_localizations.dart';
+import 'package:flutter/services.dart';
 
 class JoystickPage extends StatefulWidget {
   static const String id = 'JoystickPage';
@@ -17,6 +19,8 @@ class JoystickPage extends StatefulWidget {
 class _JoystickPageState extends State<JoystickPage> {
   int rightLong = 50;
   int leftThick = 22;
+  //StreamSubscription? inputListener; //bluetooth input stream
+  String input = '-';
 
   @override
   void initState() {
@@ -39,7 +43,16 @@ class _JoystickPageState extends State<JoystickPage> {
       screenWidth = MediaQuery.of(context).size.height;
     }
     AppLocalizations texts = AppLocalizations.of(context)!;
-    FullScreen.enterFullScreen(FullScreenMode.EMERSIVE_STICKY);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    /*inputListener = bluetooth.getinput.listen(
+      (String i) {
+        if (i != input) {
+          setState(() {});
+        }
+        input = i;
+        print(input.toString());
+      },
+    );*/
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: Column(
@@ -62,7 +75,7 @@ class _JoystickPageState extends State<JoystickPage> {
                       // FullScreen.exitFullScreen();
                       Navigator.pushNamed(context, SettingsPage.id)
                           .then((value) async {
-                        await robot.updateSetting(settingsList[activeSettings]);
+                        await robot.updateSetting(activeRobot);
                         setState(() {});
                       });
                       // Navigator.pop(context);
@@ -125,7 +138,11 @@ class CircleBoton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print('boton');
+        if (robot.boton == 1) {
+          robot.boton = 0;
+        } else {
+          robot.boton = 1;
+        }
       },
       child: Container(
         color: Colors.transparent,

@@ -62,7 +62,7 @@ class _CodePageState extends State<CodePage> {
         child: !_trashOn
             ? Scrollbar(
                 controller: _bottomController,
-                isAlwaysShown: true,
+                thumbVisibility: true,
                 radius: Radius.circular(15 / 2),
                 child: SingleChildScrollView(
                   controller: _bottomController,
@@ -141,7 +141,7 @@ class _CodePageState extends State<CodePage> {
               child: Center(
                 child: Scrollbar(
                   controller: _mainController,
-                  isAlwaysShown: true,
+                  thumbVisibility: true,
                   child: SingleChildScrollView(
                     controller: _mainController,
                     primary: false,

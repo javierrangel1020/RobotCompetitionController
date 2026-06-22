@@ -43,7 +43,6 @@ TextStyle kCodeBlockText = TextStyle(
   fontSize: 14,
 );
 
-List<RobotSettings> settingsList = List<RobotSettings>.empty(growable: true);
-
-int activeSettings = 0;
-Robot robot = Robot(settingsList[activeSettings]);
+// Un unico robot. Se carga desde almacenamiento en main() antes de usar `robot`.
+RobotSettings activeRobot = const RobotSettings();
+Robot robot = Robot(activeRobot);

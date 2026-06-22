@@ -4,6 +4,10 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Esta app usa Bluetooth para conectarse con los robots ROBLEX y controlarlos.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Esta app usa Bluetooth para conectarse con los robots ROBLEX y controlarlos.</string>
 	<key>CFBundleDisplayName</key>
 	<string>Joystick</string>
 	<key>CFBundleExecutable</key>

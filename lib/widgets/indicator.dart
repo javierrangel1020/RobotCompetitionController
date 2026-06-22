@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:joystick/constants.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:joystick/l10n/app_localizations.dart';
 import 'package:joystick/models/bluetooth_interface.dart';
 
 class Indicator extends StatefulWidget {
@@ -48,8 +47,8 @@ class _IndicatorState extends State<Indicator> {
 
     if (!_enabled) {
       color = Colors.grey[600]!;
-      title = texts.disabled;
-      subtitle = '';
+      title = widget.name;
+      subtitle = texts.disabled;
       state = 'OFF';
     } else if (!_connected) {
       color = Colors.red;
@@ -93,20 +92,17 @@ class _IndicatorState extends State<Indicator> {
                       activeColor: Colors.white,
                       activeTrackColor: kWidgetColor.withOpacity(0.8),
                       value: _enabled,
-                      onChanged: (bool value) {
-                        future() async {
-                          if (value) {
-                            await FlutterBluetoothSerial.instance
-                                .requestEnable();
-                          } else {
-                            await FlutterBluetoothSerial.instance
-                                .requestDisable();
-                          }
+                      onChanged: (bool value) async {
+                        if (value) {
+                          // Encender: dialogo del sistema para activar BT.
+                          await bluetooth.enable();
+                        } else {
+                          // Android 13+ no permite apagar el BT por codigo;
+                          // abrimos el panel del sistema para que lo apague.
+                          await bluetooth.openBluetoothSettings();
                         }
-
-                        future().then((_) {
-                          setState(() {});
-                        });
+                        // El switch refleja el estado real del adaptador via
+                        // el stream; no forzamos su valor aqui.
                       },
                     ),
                   ),

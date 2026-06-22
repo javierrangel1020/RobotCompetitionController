@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:joystick/constants.dart';
+import 'package:joystick/models/bluetooth_interface.dart';
+import 'package:joystick/models/settings_storage.dart';
 import 'package:joystick/widgets/BluetoothDeviceListEntry.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:joystick/l10n/app_localizations.dart';
 
 class DiscoveryPage extends StatefulWidget {
   final bool start;
@@ -14,68 +16,61 @@ class DiscoveryPage extends StatefulWidget {
 }
 
 class _DiscoveryPage extends State<DiscoveryPage> {
-  StreamSubscription<BluetoothDiscoveryResult>? _streamSubscription;
-  List<BluetoothDiscoveryResult> results =
-      List<BluetoothDiscoveryResult>.empty(growable: true);
+  StreamSubscription<List<ScanResult>>? _scanSubscription;
+  StreamSubscription<bool>? _isScanningSubscription;
+  final Map<String, ScanResult> _results = {};
   bool isDiscovering = false;
-
-  _DiscoveryPage();
 
   @override
   void initState() {
     super.initState();
-
-    isDiscovering = widget.start;
-    if (isDiscovering) {
-      _startDiscovery();
-    }
+    _isScanningSubscription = FlutterBluePlus.isScanning.listen((scanning) {
+      if (mounted) setState(() => isDiscovering = scanning);
+    });
+    if (widget.start) _startDiscovery();
   }
 
   void _restartDiscovery() {
-    setState(() {
-      results.clear();
-      isDiscovering = true;
-    });
-
+    setState(() => _results.clear());
     _startDiscovery();
   }
 
-  void _startDiscovery() {
-    _streamSubscription =
-        FlutterBluetoothSerial.instance.startDiscovery().listen((r) {
+  Future<void> _startDiscovery() async {
+    _scanSubscription?.cancel();
+    _scanSubscription = FlutterBluePlus.scanResults.listen((results) {
       setState(() {
-        final existingIndex = results.indexWhere(
-            (element) => element.device.address == r.device.address);
-        if (existingIndex >= 0) {
-          results[existingIndex] = r;
-        } else {
-          results.add(r);
+        for (final r in results) {
+          _results[r.device.remoteId.str] = r;
         }
       });
     });
 
-    _streamSubscription!.onDone(() {
-      setState(() {
-        isDiscovering = false;
-      });
-    });
+    try {
+      await FlutterBluePlus.startScan(
+        // Solo robots ROBLEX (los que anuncian el servicio NUS).
+        withServices: [kNusService],
+        timeout: const Duration(seconds: 15),
+      );
+    } catch (_) {}
   }
 
   @override
   void dispose() {
-    // Avoid memory leak (`setState` after dispose) and cancel discovery
-    _streamSubscription?.cancel();
-
+    _scanSubscription?.cancel();
+    _isScanningSubscription?.cancel();
+    FlutterBluePlus.stopScan();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     AppLocalizations texts = AppLocalizations.of(context)!;
+    final list = _results.values.toList();
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
         backgroundColor: kWidgetColor,
+        foregroundColor: Colors.white,
         title: isDiscovering
             ? Text(texts.discoveringDevices)
             : Text(texts.discoveredDevices),
@@ -96,52 +91,27 @@ class _DiscoveryPage extends State<DiscoveryPage> {
         ],
       ),
       body: ListView.builder(
-        itemCount: results.length,
+        itemCount: list.length,
         itemBuilder: (BuildContext context, index) {
-          BluetoothDiscoveryResult result = results[index];
-          final BluetoothDevice device = result.device;
-          final address = device.address;
+          final result = list[index];
+          final device = result.device;
+          final name = device.platformName.isNotEmpty
+              ? device.platformName
+              : result.advertisementData.advName;
+          final address = device.remoteId.str;
           return BluetoothDeviceListEntry(
-            device: device,
+            name: name,
+            address: address,
             rssi: result.rssi,
+            isConnected: device.isConnected,
             onTap: () async {
-              try {
-                /*
-                bool bonded = false;
-                if (!device.isBonded) {
-                  print('Bonding with ${device.address}...');
-                  bonded = (await FlutterBluetoothSerial.instance
-                      .bondDeviceAtAddress(address))!;
-                  print(
-                      'Bonding with ${device.address} has ${bonded ? 'succed' : 'failed'}.');
-                */
-                settingsList[activeSettings] =
-                    settingsList[activeSettings].edit(
-                  name: device.name ?? 'No Name',
-                  address: address,
-                  id: activeSettings.toString(),
-                );
-
-                Navigator.of(context).pop();
-              } catch (ex) {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Error occured while bonding'),
-                      content: Text("${ex.toString()}"),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text("Close"),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }
+              await FlutterBluePlus.stopScan();
+              activeRobot = activeRobot.edit(
+                name: name.isNotEmpty ? name : 'ROBOT',
+                address: address,
+              );
+              await SettingsStorage.save(activeRobot);
+              Navigator.of(context).pop();
             },
           );
         },

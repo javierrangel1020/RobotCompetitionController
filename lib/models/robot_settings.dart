@@ -21,7 +21,7 @@ class RobotSettings {
 
   const RobotSettings({
     this.id = '',
-    this.name = '<New>',
+    this.name = 'ROBOT',
     this.address = '<No Device>',
     this.hz = 20,
     this.reverseL = false, //

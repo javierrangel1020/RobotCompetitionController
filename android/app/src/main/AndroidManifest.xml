@@ -1,7 +1,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.joystick">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Bluetooth clasico (SPP) para comunicarse con el robot ROBLEX -->
+    <!-- Android 11 (API 30) y anteriores -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />
+
+    <!-- Android 12 (API 31) y posteriores -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
+
+    <uses-feature android:name="android.hardware.bluetooth" android:required="true" />
+
    <application
-        android:label="Robot Competition Controller"
+        android:label="ROBLEX Joystick"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

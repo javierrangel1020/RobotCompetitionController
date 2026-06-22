@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:joystick/constants.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:joystick/l10n/app_localizations.dart';
 
 Future<void> showBasicAlert(
   final BuildContext context, {

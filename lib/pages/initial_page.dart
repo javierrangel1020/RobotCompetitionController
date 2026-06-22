@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:joystick/constants.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:joystick/l10n/app_localizations.dart';
 import 'package:joystick/pages/code_page.dart';
 import 'package:joystick/pages/joystick_page.dart';
 import 'package:joystick/pages/settings_page.dart';
@@ -99,7 +99,7 @@ class _InitialPageState extends State<InitialPage> {
             ),
             onTap: () {
               Navigator.pushNamed(context, SettingsPage.id).then((value) {
-                robot.updateSetting(settingsList[activeSettings]);
+                robot.updateSetting(activeRobot);
                 setState(() {});
               });
             },
