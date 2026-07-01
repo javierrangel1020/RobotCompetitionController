@@ -46,7 +46,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.judiviga.Robot_Competition_Controller"
+        applicationId = "com.roblex.control"
         minSdkVersion = flutter.minSdkVersion
         targetSdk = 34
         versionCode = flutterVersionCode.toInteger()
