@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:joystick/models/robot_interface.dart';
+import 'package:joystick/models/terminal_log.dart';
 import 'package:joystick/pages/code_page.dart';
 import 'package:joystick/pages/initial_page.dart';
+import 'package:joystick/pages/line_follower_page.dart';
 import 'package:joystick/pages/settings_page.dart';
 import 'package:joystick/constants.dart';
 import 'package:joystick/pages/joystick_page.dart';
+import 'package:joystick/pages/terminal_page.dart';
 import 'package:joystick/models/settings_storage.dart';
 import 'package:joystick/models/permissions.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -20,6 +24,8 @@ void main() async {
     await requestBluetoothPermissions();
     await SettingsStorage.init();
     activeRobot = SettingsStorage.load();
+    robot = Robot(activeRobot);
+    terminalLog.start();
     runApp(Controller());
   });
 }
@@ -28,8 +34,8 @@ class Controller extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Control Pad',
-      home: JoystickPage(),
+      title: 'ROBLEX',
+      home: InitialPage(),
       // onGenerateRoute: ,
       routes: {
         JoystickPage.id: (context) {
@@ -38,6 +44,8 @@ class Controller extends StatelessWidget {
         CodePage.id: (context) => CodePage(),
         SettingsPage.id: (context) => SettingsPage(),
         InitialPage.id: (context) => InitialPage(),
+        LineFollowerPage.id: (context) => LineFollowerPage(),
+        TerminalPage.id: (context) => TerminalPage(),
       },
       localizationsDelegates: [
         AppLocalizations.delegate,

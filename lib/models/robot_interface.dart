@@ -31,6 +31,10 @@ class Robot {
   double correction = 0;
   int boton = 0;
 
+  // Solo se envia el joystick con su pantalla abierta, para no pisar los
+  // comandos del seguidor de linea ni los de la terminal.
+  bool joystickActive = false;
+
   ///loop variables
   double L = 0;
   double R = 0;
@@ -54,10 +58,22 @@ class Robot {
 
     Timer.periodic(Duration(milliseconds: millis), (timer) {
       drive(leftJoystick, rightJoystick);
-      if (blueOn && connected) {
+      if (blueOn && connected && joystickActive) {
         output();
       }
     });
+  }
+
+  /// Frena los motores. El robot mantiene el ultimo comando recibido, asi que
+  /// hay que mandar el alto al salir del joystick.
+  void stop() {
+    leftJoystick = 0;
+    rightJoystick = 0;
+    L = 0;
+    R = 0;
+    outL = 0;
+    outR = 0;
+    if (blueOn && connected) output();
   }
 
   Future connect(String address) async {

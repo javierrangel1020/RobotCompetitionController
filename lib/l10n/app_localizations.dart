@@ -295,6 +295,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discovered devices'**
   String get discoveredDevices;
+
+  /// Home section: remote control
+  ///
+  /// In en, this message translates to:
+  /// **'Joystick'**
+  String get joystick;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Drive the robot with the remote control'**
+  String get joystickSubtitle;
+
+  /// Home section: line follower tuning
+  ///
+  /// In en, this message translates to:
+  /// **'Line follower'**
+  String get lineFollower;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Read the sensors and tune PID and speed'**
+  String get lineFollowerSubtitle;
+
+  /// Home section: telemetry terminal
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal'**
+  String get terminal;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Read and send telemetry messages'**
+  String get terminalSubtitle;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Sensors'**
+  String get sensors;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for robot data'**
+  String get sensorsWaiting;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Line position'**
+  String get position;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Parameters'**
+  String get parameters;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Proportional gain: corrects based on how far the line is from the center. Raise it if the robot is slow in curves; lower it if it oscillates.'**
+  String get kpMessage;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Integral gain: corrects errors that build up over time. Usually left at 0 or very low.'**
+  String get kiMessage;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Derivative gain: damps sudden changes and reduces oscillation. Raise it if the robot zigzags.'**
+  String get kdMessage;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Base speed'**
+  String get baseSpeed;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Motor speed (PWM 0-255) when the line is centered.'**
+  String get baseSpeedMessage;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Read from robot'**
+  String get readParams;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Send to robot'**
+  String get sendParams;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Parameters sent'**
+  String get paramsSent;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Parameters received from robot'**
+  String get paramsReceived;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Calibrate sensors'**
+  String get calibrate;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get start;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get stop;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Robot not connected'**
+  String get notConnected;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Messages from the robot will appear here'**
+  String get terminalEmpty;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Type a message'**
+  String get terminalHint;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Show sensor data'**
+  String get showSensors;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
 }
 
 class _AppLocalizationsDelegate

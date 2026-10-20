@@ -124,9 +124,7 @@ class Bluetooth {
           } else if (c.uuid == kNusTxChar) {
             await c.setNotifyValue(true);
             _notifySub?.cancel();
-            _notifySub = c.onValueReceived.listen((data) {
-              inputBroadcast.add(ascii.decode(data, allowInvalid: true));
-            });
+            _notifySub = c.onValueReceived.listen(_onData);
           }
         }
       }
@@ -135,6 +133,17 @@ class Bluetooth {
     } catch (_) {
       _connected = false;
       _emit();
+    }
+  }
+
+  /// Cada BluetoothWrite de la libreria ROBLEX llega como una notificacion,
+  /// con o sin '\n' al final; una notificacion tambien puede traer varias
+  /// lineas. Se emite cada linea no vacia por [getinput].
+  void _onData(List<int> data) {
+    final text = utf8.decode(data, allowMalformed: true);
+    for (final line in text.split('\n')) {
+      final clean = line.replaceAll('\r', '');
+      if (clean.isNotEmpty) inputBroadcast.add(clean);
     }
   }
 

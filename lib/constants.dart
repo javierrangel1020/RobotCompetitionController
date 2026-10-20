@@ -43,6 +43,7 @@ TextStyle kCodeBlockText = TextStyle(
   fontSize: 14,
 );
 
-// Un unico robot. Se carga desde almacenamiento en main() antes de usar `robot`.
+// Un unico robot. main() carga la configuracion y crea `robot` (lo que inicia
+// la conexion BLE) antes de mostrar la app.
 RobotSettings activeRobot = const RobotSettings();
-Robot robot = Robot(activeRobot);
+late Robot robot;

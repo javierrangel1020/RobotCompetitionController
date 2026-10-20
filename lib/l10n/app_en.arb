@@ -130,5 +130,117 @@
     "discoveredDevices": "Discovered devices",
     "@discoveredDevices": {
         "description": ""
+    },
+    "joystick": "Joystick",
+    "@joystick": {
+        "description": "Home section: remote control"
+    },
+    "joystickSubtitle": "Drive the robot with the remote control",
+    "@joystickSubtitle": {
+        "description": ""
+    },
+    "lineFollower": "Line follower",
+    "@lineFollower": {
+        "description": "Home section: line follower tuning"
+    },
+    "lineFollowerSubtitle": "Read the sensors and tune PID and speed",
+    "@lineFollowerSubtitle": {
+        "description": ""
+    },
+    "terminal": "Terminal",
+    "@terminal": {
+        "description": "Home section: telemetry terminal"
+    },
+    "terminalSubtitle": "Read and send telemetry messages",
+    "@terminalSubtitle": {
+        "description": ""
+    },
+    "sensors": "Sensors",
+    "@sensors": {
+        "description": ""
+    },
+    "sensorsWaiting": "Waiting for robot data",
+    "@sensorsWaiting": {
+        "description": ""
+    },
+    "position": "Line position",
+    "@position": {
+        "description": ""
+    },
+    "parameters": "Parameters",
+    "@parameters": {
+        "description": ""
+    },
+    "kpMessage": "Proportional gain: corrects based on how far the line is from the center. Raise it if the robot is slow in curves; lower it if it oscillates.",
+    "@kpMessage": {
+        "description": ""
+    },
+    "kiMessage": "Integral gain: corrects errors that build up over time. Usually left at 0 or very low.",
+    "@kiMessage": {
+        "description": ""
+    },
+    "kdMessage": "Derivative gain: damps sudden changes and reduces oscillation. Raise it if the robot zigzags.",
+    "@kdMessage": {
+        "description": ""
+    },
+    "baseSpeed": "Base speed",
+    "@baseSpeed": {
+        "description": ""
+    },
+    "baseSpeedMessage": "Motor speed (PWM 0-255) when the line is centered.",
+    "@baseSpeedMessage": {
+        "description": ""
+    },
+    "readParams": "Read from robot",
+    "@readParams": {
+        "description": ""
+    },
+    "sendParams": "Send to robot",
+    "@sendParams": {
+        "description": ""
+    },
+    "paramsSent": "Parameters sent",
+    "@paramsSent": {
+        "description": ""
+    },
+    "paramsReceived": "Parameters received from robot",
+    "@paramsReceived": {
+        "description": ""
+    },
+    "calibrate": "Calibrate sensors",
+    "@calibrate": {
+        "description": ""
+    },
+    "start": "Start",
+    "@start": {
+        "description": ""
+    },
+    "stop": "Stop",
+    "@stop": {
+        "description": ""
+    },
+    "notConnected": "Robot not connected",
+    "@notConnected": {
+        "description": ""
+    },
+    "terminalEmpty": "Messages from the robot will appear here",
+    "@terminalEmpty": {
+        "description": ""
+    },
+    "terminalHint": "Type a message",
+    "@terminalHint": {
+        "description": ""
+    },
+    "showSensors": "Show sensor data",
+    "@showSensors": {
+        "description": ""
+    },
+    "clear": "Clear",
+    "@clear": {
+        "description": ""
+    },
+    "send": "Send",
+    "@send": {
+        "description": ""
     }
 }

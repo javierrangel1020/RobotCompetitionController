@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:joystick/models/line_follower.dart';
 import 'package:joystick/models/robot_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Almacenamiento de la configuracion de un unico robot.
 class SettingsStorage {
   static const String _key = 'robot';
+  static const String _lineFollowerKey = 'lineFollower';
   static SharedPreferences? _preferences;
 
   static Future init() async {
@@ -22,5 +24,17 @@ class SettingsStorage {
       return RobotSettings.fromJson(jsonDecode(json));
     }
     return const RobotSettings();
+  }
+
+  static Future<void> saveLineFollower(LineFollowerParams params) async {
+    await _preferences!.setString(_lineFollowerKey, jsonEncode(params.toJson()));
+  }
+
+  static LineFollowerParams loadLineFollower() {
+    final json = _preferences!.getString(_lineFollowerKey);
+    if (json != null) {
+      return LineFollowerParams.fromJson(jsonDecode(json));
+    }
+    return const LineFollowerParams();
   }
 }

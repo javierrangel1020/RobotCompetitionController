@@ -110,4 +110,92 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get discoveredDevices => 'Discovered devices';
+
+  @override
+  String get joystick => 'Joystick';
+
+  @override
+  String get joystickSubtitle => 'Drive the robot with the remote control';
+
+  @override
+  String get lineFollower => 'Line follower';
+
+  @override
+  String get lineFollowerSubtitle => 'Read the sensors and tune PID and speed';
+
+  @override
+  String get terminal => 'Terminal';
+
+  @override
+  String get terminalSubtitle => 'Read and send telemetry messages';
+
+  @override
+  String get sensors => 'Sensors';
+
+  @override
+  String get sensorsWaiting => 'Waiting for robot data';
+
+  @override
+  String get position => 'Line position';
+
+  @override
+  String get parameters => 'Parameters';
+
+  @override
+  String get kpMessage =>
+      'Proportional gain: corrects based on how far the line is from the center. Raise it if the robot is slow in curves; lower it if it oscillates.';
+
+  @override
+  String get kiMessage =>
+      'Integral gain: corrects errors that build up over time. Usually left at 0 or very low.';
+
+  @override
+  String get kdMessage =>
+      'Derivative gain: damps sudden changes and reduces oscillation. Raise it if the robot zigzags.';
+
+  @override
+  String get baseSpeed => 'Base speed';
+
+  @override
+  String get baseSpeedMessage =>
+      'Motor speed (PWM 0-255) when the line is centered.';
+
+  @override
+  String get readParams => 'Read from robot';
+
+  @override
+  String get sendParams => 'Send to robot';
+
+  @override
+  String get paramsSent => 'Parameters sent';
+
+  @override
+  String get paramsReceived => 'Parameters received from robot';
+
+  @override
+  String get calibrate => 'Calibrate sensors';
+
+  @override
+  String get start => 'Start';
+
+  @override
+  String get stop => 'Stop';
+
+  @override
+  String get notConnected => 'Robot not connected';
+
+  @override
+  String get terminalEmpty => 'Messages from the robot will appear here';
+
+  @override
+  String get terminalHint => 'Type a message';
+
+  @override
+  String get showSensors => 'Show sensor data';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get send => 'Send';
 }

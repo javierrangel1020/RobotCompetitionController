@@ -25,11 +25,17 @@ class _JoystickPageState extends State<JoystickPage> {
   @override
   void initState() {
     robot.green = 255;
+    robot.joystickActive = true;
     super.initState();
   }
 
   @override
   void dispose() {
+    robot.joystickActive = false;
+    robot.stop();
+    // Las demas pantallas usan las barras del sistema (y el teclado).
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
     super.dispose();
   }
 

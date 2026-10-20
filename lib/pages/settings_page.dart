@@ -195,6 +195,7 @@ class ValueTile extends StatelessWidget {
   final String text;
   final _ValueCallback onChange;
   final double increment;
+  final VoidCallback? onValueTap; // p. ej. para escribir el valor exacto
 
   const ValueTile({
     required this.title,
@@ -202,6 +203,7 @@ class ValueTile extends StatelessWidget {
     required this.onChange,
     this.increment = 1,
     this.text = '',
+    this.onValueTap,
   });
 
   @override
@@ -242,9 +244,14 @@ class ValueTile extends StatelessWidget {
           );
         },
       ),
-      subtitle: Text(
-        subtitle,
-        style: kSubtitleText,
+      subtitle: GestureDetector(
+        onTap: onValueTap,
+        child: Text(
+          subtitle,
+          style: onValueTap == null
+              ? kSubtitleText
+              : kSubtitleText.copyWith(decoration: TextDecoration.underline),
+        ),
       ),
       trailing: Row(
         mainAxisAlignment: MainAxisAlignment.end,

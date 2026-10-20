@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:joystick/constants.dart';
 import 'package:joystick/l10n/app_localizations.dart';
-import 'package:joystick/pages/code_page.dart';
 import 'package:joystick/pages/joystick_page.dart';
-import 'package:joystick/pages/settings_page.dart';
+import 'package:joystick/pages/line_follower_page.dart';
+import 'package:joystick/pages/terminal_page.dart';
+import 'package:joystick/widgets/connection_chip.dart';
 
-
-class InitialPage extends StatefulWidget {
+/// Pantalla de inicio: elige entre joystick, seguidor de linea y terminal.
+class InitialPage extends StatelessWidget {
   static const String id = 'InitialPage';
-  InitialPage({Key? key}) : super(key: key);
+  const InitialPage({Key? key}) : super(key: key);
 
-  @override
-  State<InitialPage> createState() => _InitialPageState();
-}
-
-class _InitialPageState extends State<InitialPage> {
   @override
   Widget build(BuildContext context) {
     if (MediaQuery.of(context).orientation == Orientation.portrait) {
@@ -28,83 +23,108 @@ class _InitialPageState extends State<InitialPage> {
     AppLocalizations texts = AppLocalizations.of(context)!;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
-        centerTitle: true,
+        title: const Text('ROBLEX'),
         backgroundColor: kWidgetColor,
-        systemOverlayStyle: SystemUiOverlayStyle.light
-            .copyWith(systemNavigationBarColor: Colors.red),
+        foregroundColor: Colors.white,
+        actions: const [ConnectionChip()],
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 40),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              GestureDetector(
-                child: Container(
-                  width: screenWidth! * 0.35,
-                  height: screenWidth! * 0.35,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 0.5,
-                    ),
-                    color: kWidgetColor,
-                  ),
-                  child: Center(child: Text('Code', style: kBotonText)),
+              Expanded(
+                child: _SectionCard(
+                  icon: Icons.sports_esports,
+                  color: kOutputColor,
+                  title: texts.joystick,
+                  subtitle: texts.joystickSubtitle,
+                  onTap: () => Navigator.pushNamed(context, JoystickPage.id),
                 ),
-                onTap: () {
-                  Navigator.pushNamed(context, CodePage.id);
-                },
               ),
-              SizedBox(width: screenWidth! * 0.1),
-              GestureDetector(
-                child: Container(
-                  width: screenWidth! * 0.35,
-                  height: screenWidth! * 0.35,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 0.5,
-                    ),
-                    color: kWidgetColor,
-                  ),
-                  child: Center(child: Text('Joystick', style: kBotonText)),
+              const SizedBox(height: 16),
+              Expanded(
+                child: _SectionCard(
+                  icon: Icons.route,
+                  color: kMathColor,
+                  title: texts.lineFollower,
+                  subtitle: texts.lineFollowerSubtitle,
+                  onTap: () =>
+                      Navigator.pushNamed(context, LineFollowerPage.id),
                 ),
-                onTap: () {
-                  Navigator.pushNamed(context, JoystickPage.id);
-                },
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: _SectionCard(
+                  icon: Icons.terminal,
+                  color: kControlColor,
+                  title: texts.terminal,
+                  subtitle: texts.terminalSubtitle,
+                  onTap: () => Navigator.pushNamed(context, TerminalPage.id),
+                ),
               ),
             ],
           ),
-          SizedBox(height: 40),
-          GestureDetector(
-            child: Container(
-              width: screenWidth! * 0.8,
-              height: screenWidth! * 0.35,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Colors.white,
-                  width: 0.5,
-                ),
-                color: kWidgetColor,
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionCard extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _SectionCard({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: kWidgetColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Colors.white, width: 0.5),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 32,
+                backgroundColor: color,
+                child: Icon(icon, color: Colors.white, size: 34),
               ),
-              child: Center(child: Text('Settings', style: kBotonText)),
-            ),
-            onTap: () {
-              Navigator.pushNamed(context, SettingsPage.id).then((value) {
-                robot.updateSetting(activeRobot);
-                setState(() {});
-              });
-            },
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: kBotonText.copyWith(fontSize: 22)),
+                    const SizedBox(height: 6),
+                    Text(subtitle, style: kSubtitleText.copyWith(fontSize: 14)),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: Colors.white),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

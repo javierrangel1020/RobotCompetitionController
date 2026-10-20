@@ -110,4 +110,93 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get discoveredDevices => 'Dispositivos Encontrados';
+
+  @override
+  String get joystick => 'Joystick';
+
+  @override
+  String get joystickSubtitle => 'Maneja el robot con el control remoto';
+
+  @override
+  String get lineFollower => 'Seguidor de línea';
+
+  @override
+  String get lineFollowerSubtitle =>
+      'Lee los sensores y ajusta el PID y la velocidad';
+
+  @override
+  String get terminal => 'Terminal';
+
+  @override
+  String get terminalSubtitle => 'Lee y envía mensajes de telemetría';
+
+  @override
+  String get sensors => 'Sensores';
+
+  @override
+  String get sensorsWaiting => 'Esperando datos del robot';
+
+  @override
+  String get position => 'Posición de la línea';
+
+  @override
+  String get parameters => 'Parámetros';
+
+  @override
+  String get kpMessage =>
+      'Ganancia proporcional: corrige según qué tan lejos está la línea del centro. Súbela si el robot reacciona lento en las curvas; bájala si oscila.';
+
+  @override
+  String get kiMessage =>
+      'Ganancia integral: corrige errores que se acumulan con el tiempo. Normalmente se deja en 0 o muy baja.';
+
+  @override
+  String get kdMessage =>
+      'Ganancia derivativa: frena los cambios bruscos y reduce la oscilación. Súbela si el robot zigzaguea.';
+
+  @override
+  String get baseSpeed => 'Velocidad base';
+
+  @override
+  String get baseSpeedMessage =>
+      'Velocidad de los motores (PWM 0-255) cuando la línea está centrada.';
+
+  @override
+  String get readParams => 'Leer del robot';
+
+  @override
+  String get sendParams => 'Enviar al robot';
+
+  @override
+  String get paramsSent => 'Parámetros enviados';
+
+  @override
+  String get paramsReceived => 'Parámetros recibidos del robot';
+
+  @override
+  String get calibrate => 'Calibrar sensores';
+
+  @override
+  String get start => 'Iniciar';
+
+  @override
+  String get stop => 'Detener';
+
+  @override
+  String get notConnected => 'Robot no conectado';
+
+  @override
+  String get terminalEmpty => 'Aquí aparecen los mensajes del robot';
+
+  @override
+  String get terminalHint => 'Escribe un mensaje';
+
+  @override
+  String get showSensors => 'Mostrar datos de sensores';
+
+  @override
+  String get clear => 'Borrar';
+
+  @override
+  String get send => 'Enviar';
 }

@@ -10,6 +10,7 @@ Future<String> editAlert(
   final String? message,
   final String initialValue = '',
   final NameCallback? onConfirm,
+  final TextInputType? keyboardType,
 }) async {
   String name = initialValue;
   await showDialog<String>(
@@ -43,6 +44,7 @@ Future<String> editAlert(
                   : SizedBox(height: 0),
               TextFormField(
                 autofocus: true,
+                keyboardType: keyboardType,
                 cursorColor: Colors.white,
                 decoration: InputDecoration(
                   border: InputBorder.none,
