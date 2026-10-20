@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:app_settings/app_settings.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 /// UUIDs del Nordic UART Service (NUS). Deben coincidir con el firmware del
@@ -106,6 +107,14 @@ class Bluetooth {
 
   Future<void> _discover(BluetoothDevice device) async {
     try {
+      // Con autoConnect no se puede pedir el MTU en connect(); sin esto Android
+      // (<14) queda en 23 y corta comandos de mas de 20 bytes, p. ej.
+      // "-255,-255,255,255,0\n", y el robot pierde el '\n'.
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+        try {
+          await device.requestMtu(512);
+        } catch (_) {}
+      }
       final services = await device.discoverServices();
       for (final service in services) {
         if (service.uuid != kNusService) continue;
