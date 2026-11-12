@@ -292,5 +292,81 @@
     "send": "Send",
     "@send": {
         "description": ""
+    },
+    "liveSpeed": "Speed",
+    "@liveSpeed": {
+        "description": "Base speed of the line follower, adjusted live"
+    },
+    "liveSpeedMessage": "Motor speed (PWM 0-255) with the line centered. Applied when you release the slider, even while the robot is running. Start slow, tune the PID, then raise it.",
+    "@liveSpeedMessage": {
+        "description": "Help for the live speed slider"
+    },
+    "running": "Running",
+    "@running": {
+        "description": "The robot is following the line"
+    },
+    "stopped": "Stopped",
+    "@stopped": {
+        "description": "The robot is stopped"
+    },
+    "autoCalibrate": "Auto calibrate",
+    "@autoCalibrate": {
+        "description": "Button: the robot spins by itself to calibrate"
+    },
+    "autoCalibrationHint": "Auto: place the line under the center of the robot; it turns to each side by itself and finishes alone. Manual: move the robot over the line by hand and tap again to finish.",
+    "@autoCalibrationHint": {
+        "description": "Explains the two calibration modes"
+    },
+    "storedCalibration": "Calibration stored in the robot",
+    "@storedCalibration": {
+        "description": "Title of the stored calibration card"
+    },
+    "storedCalibrationMessage": "Each bar is the range between the black and the white the sensor saw (raw value 0-255); the number is the contrast. The robot keeps it when switched off.",
+    "@storedCalibrationMessage": {
+        "description": "Explains the stored calibration bars"
+    },
+    "calibrationWaiting": "Waiting for the robot's calibration",
+    "@calibrationWaiting": {
+        "description": "No calibration data received yet"
+    },
+    "notCalibrated": "The robot is not calibrated. Calibrate before starting.",
+    "@notCalibrated": {
+        "description": "The robot has no calibration"
+    },
+    "calibrationOk": "All sensors have enough contrast",
+    "@calibrationOk": {
+        "description": "Stored calibration is good"
+    },
+    "calibrationWeak": "Low contrast on {sensors}: calibrate again moving them over the line and the background",
+    "@calibrationWeak": {
+        "description": "Some sensors have low contrast in the stored calibration",
+        "placeholders": {
+            "sensors": {
+                "type": "String",
+                "example": "S3, S5"
+            }
+        }
+    },
+    "positionHistory": "Position over time",
+    "@positionHistory": {
+        "description": "Title of the line position chart"
+    },
+    "averageError": "Avg. error: {value}",
+    "@averageError": {
+        "description": "Average absolute position error in the chart",
+        "placeholders": {
+            "value": {
+                "type": "String",
+                "example": "420"
+            }
+        }
+    },
+    "pidGuideTitle": "How to tune the PID",
+    "@pidGuideTitle": {
+        "description": "Title of the PID tuning guide"
+    },
+    "pidGuide": "1. Calibrate the sensors and check that all of them have contrast.\n2. Low speed (about 80-100), Ki = 0 and Kd = 0.\n3. Raise Kp until the robot follows the line but zigzags (the chart crosses the center from side to side). Then lower it a little.\n4. Raise Kd until the zigzag disappears. If the robot shakes or vibrates, Kd is too high.\n5. Raise the speed in steps of 10-20 and repeat 3 and 4. At higher speed it usually needs more Kd.\n6. Ki is rarely needed: use it, very small (0.0001), only if the robot always runs off-center on straights.\nCompare settings on the same piece of track: the lower the average error, the more centered the robot.",
+    "@pidGuide": {
+        "description": "Step by step PID tuning guide"
     }
 }

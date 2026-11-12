@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joystick/models/line_follower.dart';
+import 'package:joystick/widgets/line_tuning.dart';
 import 'package:joystick/widgets/sensor_bars.dart';
 
 void main() {
@@ -157,5 +158,96 @@ void main() {
       expect(LineProtocol.thresholdLevel(20, LineColor.black), 20);
       expect(LineProtocol.thresholdLevel(20, LineColor.white), 235);
     });
+  });
+
+  test('valores iniciales iguales a los del firmware', () {
+    const p = LineFollowerParams();
+    expect(LineProtocol.pid(p), 'PID,0.0128,0,0.089,128');
+  });
+
+  group('velocidad en vivo', () {
+    test('VEL limita a 0-255', () {
+      expect(LineProtocol.speed(180), 'VEL,180');
+      expect(LineProtocol.speed(300), 'VEL,255');
+      expect(LineProtocol.speed(-4), 'VEL,0');
+    });
+
+    test('confirmacion del robot', () {
+      expect(LineProtocol.parseSpeed('VEL,140'), 140);
+      expect(LineProtocol.parseSpeed(' VEL, 90 '), 90);
+      expect(LineProtocol.parseSpeed('VEL'), isNull);
+      expect(LineProtocol.parseSpeed('VEL,x'), isNull);
+      expect(LineProtocol.parseSpeed('VEL,1,2'), isNull);
+      expect(LineProtocol.parseSpeed('Velocidad 140'), isNull);
+    });
+
+    test('VEL no se confunde con otros mensajes', () {
+      expect(LineProtocol.parseThreshold('VEL,140'), isNull);
+      expect(LineProtocol.parsePid('VEL,140'), isNull);
+      expect(LineProtocol.parseSpeed('UMB,140'), isNull);
+    });
+  });
+
+  group('estado en marcha', () {
+    test('RUN del robot', () {
+      expect(LineProtocol.parseRunning('RUN,1'), isTrue);
+      expect(LineProtocol.parseRunning('RUN,0'), isFalse);
+      expect(LineProtocol.parseRunning('RUN,2'), isNull);
+      expect(LineProtocol.parseRunning('RUN'), isNull);
+      expect(LineProtocol.parseRunning('En marcha'), isNull);
+    });
+  });
+
+  group('calibracion guardada', () {
+    test('CAL,A pide la calibracion automatica', () {
+      expect(LineProtocol.autoCalibration, 'CAL,A');
+      // El robot responde con CAL,1 / CAL,0 como en la manual.
+      expect(LineProtocol.parseCalibration('CAL,A'), isNull);
+    });
+
+    test('CLB: negros y luego blancos', () {
+      final c = LineProtocol.parseCalibrationRanges(
+          'CLB,10,12,14,16,18,20,22,24,200,210,220,230,240,250,40,255')!;
+      expect(c.black, [10, 12, 14, 16, 18, 20, 22, 24]);
+      expect(c.white, [200, 210, 220, 230, 240, 250, 40, 255]);
+      expect(c.contrast(0), 190);
+      expect(c.hasContrast(0), isTrue);
+      expect(c.contrast(6), 18); // menos que el contraste minimo (30)
+      expect(c.hasContrast(6), isFalse);
+      expect(c.isDefault, isFalse);
+    });
+
+    test('CLB sin calibrar: 0 y 255', () {
+      final c = LineProtocol.parseCalibrationRanges(
+          'CLB,0,0,0,0,0,0,0,0,255,255,255,255,255,255,255,255')!;
+      expect(c.isDefault, isTrue);
+    });
+
+    test('CLB invalido', () {
+      expect(LineProtocol.parseCalibrationRanges('CLB,1,2,3'), isNull);
+      expect(
+          LineProtocol.parseCalibrationRanges(
+              'CLB,0,0,0,0,0,0,0,0,255,255,255,255,255,255,255,300'),
+          isNull);
+      expect(
+          LineProtocol.parseCalibrationRanges(
+              'CLB,0,0,0,0,0,0,0,x,255,255,255,255,255,255,255,255'),
+          isNull);
+      // Una lectura SEN tiene otro prefijo.
+      expect(
+          LineProtocol.parseCalibrationRanges(
+              'SEN,0,0,0,0,0,0,0,0,255,255,255,255,255,255,255,255'),
+          isNull);
+      expect(
+          LineProtocol.parseSensors(
+              'CLB,0,0,0,0,0,0,0,0,255,255,255,255,255,255,255,255'),
+          isNull);
+    });
+  });
+
+  test('error medio de la grafica: solo las muestras con linea', () {
+    expect(averageError([]), isNull);
+    expect(averageError([null, null]), isNull);
+    expect(averageError([-1000, null, 500, 0]), 500);
   });
 }

@@ -529,6 +529,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Send'**
   String get send;
+
+  /// Base speed of the line follower, adjusted live
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get liveSpeed;
+
+  /// Help for the live speed slider
+  ///
+  /// In en, this message translates to:
+  /// **'Motor speed (PWM 0-255) with the line centered. Applied when you release the slider, even while the robot is running. Start slow, tune the PID, then raise it.'**
+  String get liveSpeedMessage;
+
+  /// The robot is following the line
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get running;
+
+  /// The robot is stopped
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped'**
+  String get stopped;
+
+  /// Button: the robot spins by itself to calibrate
+  ///
+  /// In en, this message translates to:
+  /// **'Auto calibrate'**
+  String get autoCalibrate;
+
+  /// Explains the two calibration modes
+  ///
+  /// In en, this message translates to:
+  /// **'Auto: place the line under the center of the robot; it turns to each side by itself and finishes alone. Manual: move the robot over the line by hand and tap again to finish.'**
+  String get autoCalibrationHint;
+
+  /// Title of the stored calibration card
+  ///
+  /// In en, this message translates to:
+  /// **'Calibration stored in the robot'**
+  String get storedCalibration;
+
+  /// Explains the stored calibration bars
+  ///
+  /// In en, this message translates to:
+  /// **'Each bar is the range between the black and the white the sensor saw (raw value 0-255); the number is the contrast. The robot keeps it when switched off.'**
+  String get storedCalibrationMessage;
+
+  /// No calibration data received yet
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the robot's calibration'**
+  String get calibrationWaiting;
+
+  /// The robot has no calibration
+  ///
+  /// In en, this message translates to:
+  /// **'The robot is not calibrated. Calibrate before starting.'**
+  String get notCalibrated;
+
+  /// Stored calibration is good
+  ///
+  /// In en, this message translates to:
+  /// **'All sensors have enough contrast'**
+  String get calibrationOk;
+
+  /// Some sensors have low contrast in the stored calibration
+  ///
+  /// In en, this message translates to:
+  /// **'Low contrast on {sensors}: calibrate again moving them over the line and the background'**
+  String calibrationWeak(String sensors);
+
+  /// Title of the line position chart
+  ///
+  /// In en, this message translates to:
+  /// **'Position over time'**
+  String get positionHistory;
+
+  /// Average absolute position error in the chart
+  ///
+  /// In en, this message translates to:
+  /// **'Avg. error: {value}'**
+  String averageError(String value);
+
+  /// Title of the PID tuning guide
+  ///
+  /// In en, this message translates to:
+  /// **'How to tune the PID'**
+  String get pidGuideTitle;
+
+  /// Step by step PID tuning guide
+  ///
+  /// In en, this message translates to:
+  /// **'1. Calibrate the sensors and check that all of them have contrast.
+2. Low speed (about 80-100), Ki = 0 and Kd = 0.
+3. Raise Kp until the robot follows the line but zigzags (the chart crosses the center from side to side). Then lower it a little.
+4. Raise Kd until the zigzag disappears. If the robot shakes or vibrates, Kd is too high.
+5. Raise the speed in steps of 10-20 and repeat 3 and 4. At higher speed it usually needs more Kd.
+6. Ki is rarely needed: use it, very small (0.0001), only if the robot always runs off-center on straights.
+Compare settings on the same piece of track: the lower the average error, the more centered the robot.'**
+  String get pidGuide;
 }
 
 class _AppLocalizationsDelegate

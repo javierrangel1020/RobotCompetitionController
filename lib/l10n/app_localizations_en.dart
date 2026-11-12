@@ -236,4 +236,62 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get send => 'Send';
+
+  @override
+  String get liveSpeed => 'Speed';
+
+  @override
+  String get liveSpeedMessage => 'Motor speed (PWM 0-255) with the line centered. Applied when you release the slider, even while the robot is running. Start slow, tune the PID, then raise it.';
+
+  @override
+  String get running => 'Running';
+
+  @override
+  String get stopped => 'Stopped';
+
+  @override
+  String get autoCalibrate => 'Auto calibrate';
+
+  @override
+  String get autoCalibrationHint => 'Auto: place the line under the center of the robot; it turns to each side by itself and finishes alone. Manual: move the robot over the line by hand and tap again to finish.';
+
+  @override
+  String get storedCalibration => 'Calibration stored in the robot';
+
+  @override
+  String get storedCalibrationMessage => 'Each bar is the range between the black and the white the sensor saw (raw value 0-255); the number is the contrast. The robot keeps it when switched off.';
+
+  @override
+  String get calibrationWaiting => 'Waiting for the robot's calibration';
+
+  @override
+  String get notCalibrated => 'The robot is not calibrated. Calibrate before starting.';
+
+  @override
+  String get calibrationOk => 'All sensors have enough contrast';
+
+  @override
+  String calibrationWeak(String sensors) {
+    return 'Low contrast on $sensors: calibrate again moving them over the line and the background';
+  }
+
+  @override
+  String get positionHistory => 'Position over time';
+
+  @override
+  String averageError(String value) {
+    return 'Avg. error: $value';
+  }
+
+  @override
+  String get pidGuideTitle => 'How to tune the PID';
+
+  @override
+  String get pidGuide => '1. Calibrate the sensors and check that all of them have contrast.
+2. Low speed (about 80-100), Ki = 0 and Kd = 0.
+3. Raise Kp until the robot follows the line but zigzags (the chart crosses the center from side to side). Then lower it a little.
+4. Raise Kd until the zigzag disappears. If the robot shakes or vibrates, Kd is too high.
+5. Raise the speed in steps of 10-20 and repeat 3 and 4. At higher speed it usually needs more Kd.
+6. Ki is rarely needed: use it, very small (0.0001), only if the robot always runs off-center on straights.
+Compare settings on the same piece of track: the lower the average error, the more centered the robot.';
 }

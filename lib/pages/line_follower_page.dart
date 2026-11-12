@@ -10,6 +10,7 @@ import 'package:joystick/models/terminal_log.dart';
 import 'package:joystick/pages/settings_page.dart';
 import 'package:joystick/widgets/connection_chip.dart';
 import 'package:joystick/widgets/edit_alert.dart';
+import 'package:joystick/widgets/line_tuning.dart';
 import 'package:joystick/widgets/sensor_bars.dart';
 
 /// Seguidor de linea: muestra los sensores y ajusta PID y velocidad.
@@ -39,6 +40,16 @@ class _LineFollowerPageState extends State<LineFollowerPage> {
   // conectar y al entrar o salir de la calibracion (valores crudos vs calibrados).
   int _maxSeen = 0;
 
+  // Estado que informa el robot ("RUN,1" / "RUN,0") y calibracion que tiene
+  // guardada ("CLB,..."); llegan tras GET y cada vez que cambian.
+  bool _running = false;
+  SensorCalibration? _storedCalibration;
+
+  // Ultimas posiciones de la linea para la grafica (null = no se vio la
+  // linea). El robot envia una lectura cada 50 ms: 100 muestras = 5 segundos.
+  static const int _historyLength = 100;
+  final List<int?> _history = [];
+
   StreamSubscription? _stateSub;
   StreamSubscription? _inputSub;
 
@@ -57,6 +68,9 @@ class _LineFollowerPageState extends State<LineFollowerPage> {
           _calMin = null;
           _calMax = null;
           _maxSeen = 0;
+          _running = false;
+          _storedCalibration = null;
+          _history.clear();
         }
       });
       // Al (re)conectar: pedir las lecturas y los parametros que tiene el robot.
@@ -89,7 +103,30 @@ class _LineFollowerPageState extends State<LineFollowerPage> {
             calMax[i] = max(calMax[i], reading.values[i]);
           }
         }
+        // Calibrando, el robot no envia posicion: no es que perdiera la linea.
+        if (!_calibrating) {
+          _history.add(reading.position);
+          if (_history.length > _historyLength) _history.removeAt(0);
+        }
       });
+      return;
+    }
+    final running = LineProtocol.parseRunning(line);
+    if (running != null) {
+      setState(() => _running = running);
+      return;
+    }
+    final speed = LineProtocol.parseSpeed(line);
+    if (speed != null) {
+      // Confirmacion de "VEL": el robot pudo haber limitado el valor.
+      final updated = _params.edit(speed: speed);
+      setState(() => _params = updated);
+      SettingsStorage.saveLineFollower(updated);
+      return;
+    }
+    final stored = LineProtocol.parseCalibrationRanges(line);
+    if (stored != null) {
+      setState(() => _storedCalibration = stored);
       return;
     }
     final params = LineProtocol.parsePid(line);
@@ -152,6 +189,21 @@ class _LineFollowerPageState extends State<LineFollowerPage> {
   // El robot confirma con "CAL,1" / "CAL,0"; hasta entonces el boton no cambia.
   void _toggleCalibration() {
     terminalLog.send(LineProtocol.calibration(!_calibrating));
+  }
+
+  void _autoCalibrate() {
+    terminalLog.send(LineProtocol.autoCalibration);
+  }
+
+  // La velocidad se ajusta en vivo, tambien en marcha: se ve al instante y se
+  // envia al robot al soltar con "VEL", sin pasar por "Enviar al robot".
+  void _previewSpeed(int speed) {
+    setState(() => _params = _params.edit(speed: speed));
+  }
+
+  void _commitSpeed() {
+    SettingsStorage.saveLineFollower(_params);
+    terminalLog.send(LineProtocol.speed(_params.speed));
   }
 
   // El color de linea se aplica al tocarlo, sin pasar por "Enviar al robot":
@@ -231,6 +283,15 @@ class _LineFollowerPageState extends State<LineFollowerPage> {
         foregroundColor: Colors.white,
         actions: const [ConnectionChip()],
       ),
+      // Iniciar y Detener siempre a mano, en cualquier parte de la pantalla.
+      bottomNavigationBar: _RunBar(
+        connected: _connected,
+        running: _running,
+        // El robot no arranca mientras calibra.
+        canStart: _connected && !_calibrating,
+        onStart: _start,
+        onStop: () => terminalLog.send(LineProtocol.run(false)),
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -253,8 +314,11 @@ class _LineFollowerPageState extends State<LineFollowerPage> {
               onThresholdChangeEnd: _commitThreshold,
             ),
             const SizedBox(height: 12),
-            _ThresholdControl(
+            _SliderControl(
               value: p.threshold,
+              min: LineFollowerParams.minThreshold,
+              max: LineFollowerParams.maxThreshold,
+              color: kThresholdColor,
               enabled: _connected && !_calibrating,
               title: texts.threshold,
               hint: texts.thresholdMessage,
@@ -268,21 +332,43 @@ class _LineFollowerPageState extends State<LineFollowerPage> {
             ),
             const SizedBox(height: 12),
             LinePositionBar(position: _reading?.position),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
+            _SectionTitle(texts.calibrate),
             // Junto a las barras: mientras se calibra hay que mirarlas.
-            _ActionButton(
-              text: _calibrating ? texts.finishCalibration : texts.calibrate,
-              icon: _calibrating ? Icons.check : Icons.tune,
-              color: _calibrating ? kVariableColor : kWidgetColor,
-              enabled: _connected,
-              onTap: _toggleCalibration,
+            Row(
+              children: [
+                Expanded(
+                  child: _ActionButton(
+                    text:
+                        _calibrating ? texts.finishCalibration : texts.calibrate,
+                    icon: _calibrating ? Icons.check : Icons.tune,
+                    color: _calibrating ? kVariableColor : kWidgetColor,
+                    enabled: _connected && !_running,
+                    onTap: _toggleCalibration,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _ActionButton(
+                    text: texts.autoCalibrate,
+                    icon: Icons.autorenew,
+                    enabled: _connected && !_running && !_calibrating,
+                    onTap: _autoCalibrate,
+                  ),
+                ),
+              ],
             ),
-            if (_calibrating)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
-                child: Text(texts.calibrationHint,
-                    style: kSubtitleText.copyWith(fontSize: 13)),
-              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+              child: Text(
+                  _calibrating
+                      ? texts.calibrationHint
+                      : texts.autoCalibrationHint,
+                  style: kSubtitleText.copyWith(fontSize: 13)),
+            ),
+            const SizedBox(height: 12),
+            CalibrationRangesCard(
+                calibration: _connected ? _storedCalibration : null),
             const SizedBox(height: 24),
             _SectionTitle(texts.lineColor),
             Row(
@@ -316,7 +402,27 @@ class _LineFollowerPageState extends State<LineFollowerPage> {
                   style: kSubtitleText.copyWith(fontSize: 13)),
             ),
             const SizedBox(height: 24),
+            _SectionTitle(texts.liveSpeed),
+            _SliderControl(
+              value: p.speed,
+              min: 0,
+              max: 255,
+              color: kOutputColor,
+              enabled: _connected,
+              title: texts.baseSpeed,
+              hint: texts.liveSpeedMessage,
+              onChanged: _previewSpeed,
+              onChangeEnd: _commitSpeed,
+              onValueTap: () =>
+                  _editValue(texts.baseSpeed, p.speed.toDouble(), (v) {
+                _previewSpeed(v.round().clamp(0, 255));
+                _commitSpeed();
+              }),
+            ),
+            const SizedBox(height: 24),
             _SectionTitle(texts.parameters),
+            PositionChart(history: _history, capacity: _historyLength),
+            const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
                 color: kWidgetColor,
@@ -354,19 +460,6 @@ class _LineFollowerPageState extends State<LineFollowerPage> {
                     onValueTap: () => _editValue(
                         'Kd', p.kd, (v) => _setParams(_params.edit(kd: v))),
                   ),
-                  Line(),
-                  ValueTile(
-                    title: texts.baseSpeed,
-                    subtitle: '${p.speed}',
-                    text: texts.baseSpeedMessage,
-                    increment: 10,
-                    onChange: (inc) =>
-                        _setParams(p.edit(speed: p.speed + inc.round())),
-                    onValueTap: () => _editValue(
-                        texts.baseSpeed,
-                        p.speed.toDouble(),
-                        (v) => _setParams(_params.edit(speed: v.round()))),
-                  ),
                 ],
               ),
             ),
@@ -393,42 +486,123 @@ class _LineFollowerPageState extends State<LineFollowerPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: _ActionButton(
-                    text: texts.start,
-                    icon: Icons.play_arrow,
-                    color: Colors.green[700]!,
-                    height: 56,
-                    // El robot no arranca mientras calibra.
-                    enabled: _connected && !_calibrating,
-                    onTap: _start,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _ActionButton(
-                    text: texts.stop,
-                    icon: Icons.stop,
-                    color: Colors.red[700]!,
-                    height: 56,
-                    enabled: _connected,
-                    onTap: () => terminalLog.send(LineProtocol.run(false)),
-                  ),
-                ),
-              ],
-            ),
-            if (!_connected)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Text(
-                  texts.notConnected,
-                  style: kSubtitleText,
-                  textAlign: TextAlign.center,
-                ),
+            const SizedBox(height: 16),
+            _PidGuide(title: texts.pidGuideTitle, text: texts.pidGuide),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Barra fija abajo: estado del robot e Iniciar / Detener.
+class _RunBar extends StatelessWidget {
+  final bool connected;
+  final bool running;
+  final bool canStart;
+  final VoidCallback onStart;
+  final VoidCallback onStop;
+
+  const _RunBar({
+    required this.connected,
+    required this.running,
+    required this.canStart,
+    required this.onStart,
+    required this.onStop,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    AppLocalizations texts = AppLocalizations.of(context)!;
+    final status = !connected
+        ? texts.notConnected
+        : running
+            ? texts.running
+            : texts.stopped;
+    final statusColor = !connected
+        ? Colors.white54
+        : running
+            ? kMathColor
+            : Colors.white70;
+
+    return Container(
+      color: kWidgetColor,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.circle, size: 10, color: statusColor),
+                  const SizedBox(width: 6),
+                  Text(status,
+                      style: kSubtitleText.copyWith(color: statusColor)),
+                ],
               ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: _ActionButton(
+                      text: texts.start,
+                      icon: Icons.play_arrow,
+                      color: Colors.green[700]!,
+                      height: 52,
+                      enabled: canStart,
+                      onTap: onStart,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _ActionButton(
+                      text: texts.stop,
+                      icon: Icons.stop,
+                      color: Colors.red[700]!,
+                      height: 52,
+                      enabled: connected,
+                      onTap: onStop,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Guia paso a paso para calibrar el PID, plegada por defecto.
+class _PidGuide extends StatelessWidget {
+  final String title;
+  final String text;
+  const _PidGuide({required this.title, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: kWidgetColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white, width: 0.5),
+      ),
+      child: Theme(
+        // Sin las rayas que ExpansionTile dibuja arriba y abajo al abrirse.
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          leading: const Icon(Icons.school, color: Colors.white),
+          title: Text(title, style: kTitleText),
+          iconColor: Colors.white,
+          collapsedIconColor: Colors.white,
+          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          children: [
+            Text(text,
+                style: kSubtitleText.copyWith(fontSize: 13, height: 1.4)),
           ],
         ),
       ),
@@ -449,10 +623,14 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-/// Umbral de deteccion: control deslizante (1-254) del mismo color que la raya
-/// de las barras. Tocar el numero permite escribirlo.
-class _ThresholdControl extends StatelessWidget {
+/// Control deslizante de un valor entero ([min] a [max]) para el umbral y la
+/// velocidad. [color] es el de la raya del umbral en las barras. Tocar el
+/// numero permite escribirlo.
+class _SliderControl extends StatelessWidget {
   final int value;
+  final int min;
+  final int max;
+  final Color color;
   final bool enabled;
   final String title;
   final String hint;
@@ -460,8 +638,11 @@ class _ThresholdControl extends StatelessWidget {
   final VoidCallback onChangeEnd;
   final VoidCallback onValueTap;
 
-  const _ThresholdControl({
+  const _SliderControl({
     required this.value,
+    required this.min,
+    required this.max,
+    required this.color,
     required this.enabled,
     required this.title,
     required this.hint,
@@ -486,15 +667,15 @@ class _ThresholdControl extends StatelessWidget {
           children: [
             Row(
               children: [
-                Container(width: 16, height: 3, color: kThresholdColor),
+                Container(width: 16, height: 3, color: color),
                 const SizedBox(width: 8),
                 Text(title, style: kTitleText),
                 Expanded(
                   child: Slider(
-                    value: value.toDouble(),
-                    min: LineFollowerParams.minThreshold.toDouble(),
-                    max: LineFollowerParams.maxThreshold.toDouble(),
-                    activeColor: kThresholdColor,
+                    value: value.clamp(min, max).toDouble(),
+                    min: min.toDouble(),
+                    max: max.toDouble(),
+                    activeColor: color,
                     inactiveColor: kBackgroundColor,
                     onChanged:
                         enabled ? (v) => onChanged(v.round()) : null,

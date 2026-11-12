@@ -12,11 +12,12 @@ class LineFollowerParams {
   static const int minThreshold = 1;
   static const int maxThreshold = 254;
 
+  // Los mismos valores iniciales que el firmware del robot.
   const LineFollowerParams({
-    this.kp = 0.05,
+    this.kp = 0.0128,
     this.ki = 0,
-    this.kd = 0.5,
-    this.speed = 150,
+    this.kd = 0.089,
+    this.speed = 128,
     this.threshold = 128,
   });
 
@@ -67,6 +68,26 @@ class CalibrationStatus {
   const CalibrationStatus(this.calibrating, [this.noContrast = const []]);
 }
 
+/// Calibracion guardada en el robot: "CLB,n0..n7,b0..b7". Para cada sensor, el
+/// valor sin calibrar (0-255) que toma como negro ([black]) y como blanco
+/// ([white]). Sin calibrar, el robot usa 0 y 255.
+class SensorCalibration {
+  final List<int> black;
+  final List<int> white;
+
+  const SensorCalibration(this.black, this.white);
+
+  /// Diferencia entre el blanco y el negro del sensor [i].
+  int contrast(int i) => white[i] - black[i];
+
+  /// true si el sensor [i] tiene suficiente contraste para distinguir la linea.
+  bool hasContrast(int i) => contrast(i) >= LineProtocol.minContrast;
+
+  /// true si el robot nunca se calibro (todos los sensores en 0-255).
+  bool get isDefault =>
+      black.every((v) => v == 0) && white.every((v) => v == 255);
+}
+
 /// Lectura que envia el robot: "SEN,s0,...,s7,pos".
 class SensorReading {
   final List<int> values; // 0-255, S0 a la izquierda
@@ -83,10 +104,11 @@ enum LineColor { black, white }
 /// agrega el '\n'). Llevan prefijo de letras para no confundirse con el del
 /// joystick "outR,outL,R,G,B", que empieza por numero o '-'.
 ///
-///   App -> robot: PID,kp,ki,kd,vel | UMB,n | GET | RUN,1/0 | SEN,1/0 |
-///                 CAL,1/0 | LIN,N/B
-///   Robot -> app: SEN,s0,...,s7,pos | PID,kp,ki,kd,vel | UMB,n | LIN,N/B |
-///                 CAL,1 | CAL,0[,sensores sin contraste]
+///   App -> robot: PID,kp,ki,kd,vel | VEL,n | UMB,n | GET | RUN,1/0 | SEN,1/0 |
+///                 CAL,1/0 | CAL,A | LIN,N/B
+///   Robot -> app: SEN,s0,...,s7,pos | PID,kp,ki,kd,vel | VEL,n | UMB,n |
+///                 LIN,N/B | RUN,1/0 | CAL,1 | CAL,0[,sensores sin contraste] |
+///                 CLB,n0..n7,b0..b7
 class LineProtocol {
   static const int sensorCount = 8;
   static const int positionRange = 3500;
@@ -105,6 +127,49 @@ class LineProtocol {
 
   /// "CAL,1" entra en modo calibracion, "CAL,0" lo termina y aplica.
   static String calibration(bool on) => 'CAL,${on ? 1 : 0}';
+
+  /// Calibracion automatica: el robot gira solo sobre la linea y termina solo
+  /// (informa "CAL,1" al empezar y "CAL,0,..." al terminar, igual que la manual).
+  static const String autoCalibration = 'CAL,A';
+
+  /// Cambia solo la velocidad base, tambien con el robot en marcha. El robot
+  /// responde con el mismo mensaje y el valor que aplico.
+  static String speed(int v) => 'VEL,${v.clamp(0, 255)}';
+
+  static int? parseSpeed(String line) {
+    final parts = line.split(',');
+    if (parts.length != 2 || parts[0].trim() != 'VEL') return null;
+    return int.tryParse(parts[1].trim())?.clamp(0, 255);
+  }
+
+  /// "RUN,1" / "RUN,0": el robot informa que arranco o se detuvo (por la app,
+  /// por su boton o porque perdio la linea), y tambien tras GET.
+  static bool? parseRunning(String line) {
+    final parts = line.split(',');
+    if (parts.length != 2 || parts[0].trim() != 'RUN') return null;
+    switch (parts[1].trim()) {
+      case '1':
+        return true;
+      case '0':
+        return false;
+    }
+    return null;
+  }
+
+  static SensorCalibration? parseCalibrationRanges(String line) {
+    final parts = line.split(',');
+    if (parts.length != 1 + 2 * sensorCount || parts[0].trim() != 'CLB') {
+      return null;
+    }
+    final values = <int>[];
+    for (final p in parts.skip(1)) {
+      final v = int.tryParse(p.trim());
+      if (v == null || v < 0 || v > 255) return null;
+      values.add(v);
+    }
+    return SensorCalibration(
+        values.sublist(0, sensorCount), values.sublist(sensorCount));
+  }
 
   /// Igual que sobreLinea() del firmware: con linea negra un sensor la ve si su
   /// valor es menor que el umbral; con linea blanca, si es mayor que 255 - umbral.
