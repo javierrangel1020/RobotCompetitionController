@@ -581,7 +581,7 @@ abstract class AppLocalizations {
   /// No calibration data received yet
   ///
   /// In en, this message translates to:
-  /// **'Waiting for the robot's calibration'**
+  /// **'Waiting for the robot\'s calibration'**
   String get calibrationWaiting;
 
   /// The robot has no calibration
@@ -623,13 +623,7 @@ abstract class AppLocalizations {
   /// Step by step PID tuning guide
   ///
   /// In en, this message translates to:
-  /// **'1. Calibrate the sensors and check that all of them have contrast.
-2. Low speed (about 80-100), Ki = 0 and Kd = 0.
-3. Raise Kp until the robot follows the line but zigzags (the chart crosses the center from side to side). Then lower it a little.
-4. Raise Kd until the zigzag disappears. If the robot shakes or vibrates, Kd is too high.
-5. Raise the speed in steps of 10-20 and repeat 3 and 4. At higher speed it usually needs more Kd.
-6. Ki is rarely needed: use it, very small (0.0001), only if the robot always runs off-center on straights.
-Compare settings on the same piece of track: the lower the average error, the more centered the robot.'**
+  /// **'1. Calibrate the sensors and check that all of them have contrast.\n2. Low speed (about 80-100), Ki = 0 and Kd = 0.\n3. Raise Kp until the robot follows the line but zigzags (the chart crosses the center from side to side). Then lower it a little.\n4. Raise Kd until the zigzag disappears. If the robot shakes or vibrates, Kd is too high.\n5. Raise the speed in steps of 10-20 and repeat 3 and 4. At higher speed it usually needs more Kd.\n6. Ki is rarely needed: use it, very small (0.0001), only if the robot always runs off-center on straights.\nCompare settings on the same piece of track: the lower the average error, the more centered the robot.'**
   String get pidGuide;
 }
 

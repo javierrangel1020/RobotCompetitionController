@@ -242,7 +242,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get liveSpeed => 'Velocidad';
 
   @override
-  String get liveSpeedMessage => 'Velocidad de los motores (PWM 0-255) con la línea centrada. Se aplica al soltar el control, también con el robot en marcha. Empieza lento, ajusta el PID y luego súbela.';
+  String get liveSpeedMessage =>
+      'Velocidad de los motores (PWM 0-255) con la línea centrada. Se aplica al soltar el control, también con el robot en marcha. Empieza lento, ajusta el PID y luego súbela.';
 
   @override
   String get running => 'En marcha';
@@ -254,19 +255,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get autoCalibrate => 'Auto-calibrar';
 
   @override
-  String get autoCalibrationHint => 'Auto: pon la línea bajo el centro del robot; girará solo a cada lado y terminará solo. Manual: pasa el robot sobre la línea a mano y toca de nuevo para terminar.';
+  String get autoCalibrationHint =>
+      'Auto: pon la línea bajo el centro del robot; girará solo a cada lado y terminará solo. Manual: pasa el robot sobre la línea a mano y toca de nuevo para terminar.';
 
   @override
   String get storedCalibration => 'Calibración guardada en el robot';
 
   @override
-  String get storedCalibrationMessage => 'Cada barra es el rango entre el negro y el blanco que vio el sensor (valor sin calibrar 0-255); el número es el contraste. El robot la conserva al apagarse.';
+  String get storedCalibrationMessage =>
+      'Cada barra es el rango entre el negro y el blanco que vio el sensor (valor sin calibrar 0-255); el número es el contraste. El robot la conserva al apagarse.';
 
   @override
   String get calibrationWaiting => 'Esperando la calibración del robot';
 
   @override
-  String get notCalibrated => 'El robot no está calibrado. Calibra antes de arrancar.';
+  String get notCalibrated =>
+      'El robot no está calibrado. Calibra antes de arrancar.';
 
   @override
   String get calibrationOk => 'Todos los sensores tienen suficiente contraste';
@@ -288,11 +292,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pidGuideTitle => 'Cómo calibrar el PID';
 
   @override
-  String get pidGuide => '1. Calibra los sensores y revisa que todos tengan contraste.
-2. Velocidad baja (unos 80-100), Ki = 0 y Kd = 0.
-3. Sube Kp hasta que el robot siga la línea pero zigzaguee (la gráfica cruza el centro de lado a lado). Luego bájalo un poco.
-4. Sube Kd hasta que desaparezca el zigzag. Si el robot tiembla o vibra, Kd está muy alto.
-5. Sube la velocidad de 10 en 10 o de 20 en 20 y repite 3 y 4. A más velocidad suele necesitar más Kd.
-6. Ki casi nunca hace falta: úsalo, muy bajo (0.0001), solo si en las rectas el robot va siempre corrido a un lado.
-Compara ajustes en el mismo tramo de pista: cuanto menor el error medio, más centrado va el robot.';
+  String get pidGuide =>
+      '1. Calibra los sensores y revisa que todos tengan contraste.\n2. Velocidad baja (unos 80-100), Ki = 0 y Kd = 0.\n3. Sube Kp hasta que el robot siga la línea pero zigzaguee (la gráfica cruza el centro de lado a lado). Luego bájalo un poco.\n4. Sube Kd hasta que desaparezca el zigzag. Si el robot tiembla o vibra, Kd está muy alto.\n5. Sube la velocidad de 10 en 10 o de 20 en 20 y repite 3 y 4. A más velocidad suele necesitar más Kd.\n6. Ki casi nunca hace falta: úsalo, muy bajo (0.0001), solo si en las rectas el robot va siempre corrido a un lado.\nCompara ajustes en el mismo tramo de pista: cuanto menor el error medio, más centrado va el robot.';
 }
