@@ -140,6 +140,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get position => 'Posición de la línea';
 
   @override
+  String get lineColor => 'Color de la línea';
+
+  @override
+  String get blackLine => 'Negra';
+
+  @override
+  String get whiteLine => 'Blanca';
+
+  @override
+  String get lineColorMessage =>
+      'Negra: línea negra sobre fondo blanco. Blanca: línea blanca sobre fondo negro. El robot cambia al instante.';
+
+  @override
   String get parameters => 'Parámetros';
 
   @override
@@ -175,6 +188,31 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get calibrate => 'Calibrar sensores';
+
+  @override
+  String get finishCalibration => 'Terminar calibración';
+
+  @override
+  String get calibrationHint =>
+      'Pasa todos los sensores sobre la línea y sobre el fondo. El recuadro de cada barra es lo que ya vio ese sensor; su nombre se pone verde cuando tiene suficiente contraste. Toca de nuevo para terminar.';
+
+  @override
+  String get calibrationDone => 'Calibración lista';
+
+  @override
+  String calibrationNoContrast(String sensors) {
+    return 'Calibración lista. Sin contraste (quedan como estaban): $sensors';
+  }
+
+  @override
+  String get threshold => 'Umbral';
+
+  @override
+  String get thresholdMessage =>
+      'Arrastra la raya naranja sobre las barras o mueve el control. La zona verde es lo que cuenta como línea y los sensores que la ven se ponen verdes. Más alto = más sensible: súbelo si el robot pierde la línea entre dos sensores; bájalo si confunde el fondo con la línea. Se envía al robot al soltar. Calibra primero.';
+
+  @override
+  String get scale => 'Escala';
 
   @override
   String get start => 'Iniciar';

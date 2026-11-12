@@ -167,6 +167,22 @@
     "@position": {
         "description": ""
     },
+    "lineColor": "Line color",
+    "@lineColor": {
+        "description": "Section title: color of the line the robot follows"
+    },
+    "blackLine": "Black",
+    "@blackLine": {
+        "description": "Black line on a white background"
+    },
+    "whiteLine": "White",
+    "@whiteLine": {
+        "description": "White line on a black background"
+    },
+    "lineColorMessage": "Black: black line on a white background. White: white line on a black background. The robot switches right away.",
+    "@lineColorMessage": {
+        "description": ""
+    },
     "parameters": "Parameters",
     "@parameters": {
         "description": ""
@@ -210,6 +226,40 @@
     "calibrate": "Calibrate sensors",
     "@calibrate": {
         "description": ""
+    },
+    "finishCalibration": "Finish calibration",
+    "@finishCalibration": {
+        "description": "Calibrate button while the robot is in calibration mode"
+    },
+    "calibrationHint": "Sweep every sensor over the line and over the background. The box on each bar is what that sensor has seen so far; its name turns green once it has enough contrast. Tap again to finish.",
+    "@calibrationHint": {
+        "description": ""
+    },
+    "calibrationDone": "Calibration done",
+    "@calibrationDone": {
+        "description": ""
+    },
+    "calibrationNoContrast": "Calibration done. No contrast (left unchanged): {sensors}",
+    "@calibrationNoContrast": {
+        "description": "Calibration finished but some sensors never saw the line and the background",
+        "placeholders": {
+            "sensors": {
+                "type": "String",
+                "example": "S3, S5"
+            }
+        }
+    },
+    "threshold": "Threshold",
+    "@threshold": {
+        "description": "Line detection threshold"
+    },
+    "thresholdMessage": "Drag the orange mark on the bars or move the slider. The green zone is what counts as line, and sensors in it turn green. Higher = more sensitive: raise it if the robot loses the line between two sensors; lower it if it mistakes the background for the line. Sent to the robot when you let go. Calibrate first.",
+    "@thresholdMessage": {
+        "description": ""
+    },
+    "scale": "Scale",
+    "@scale": {
+        "description": "Label of the vertical scale of the sensor bars, followed by the range (e.g. 'Scale 0-64')"
     },
     "start": "Start",
     "@start": {

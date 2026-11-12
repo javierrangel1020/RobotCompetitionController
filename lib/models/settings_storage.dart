@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsStorage {
   static const String _key = 'robot';
   static const String _lineFollowerKey = 'lineFollower';
+  static const String _lineColorKey = 'lineColor';
   static SharedPreferences? _preferences;
 
   static Future init() async {
@@ -36,5 +37,15 @@ class SettingsStorage {
       return LineFollowerParams.fromJson(jsonDecode(json));
     }
     return const LineFollowerParams();
+  }
+
+  static Future<void> saveLineColor(LineColor color) async {
+    await _preferences!.setString(_lineColorKey, color.name);
+  }
+
+  static LineColor loadLineColor() {
+    return _preferences!.getString(_lineColorKey) == LineColor.white.name
+        ? LineColor.white
+        : LineColor.black;
   }
 }

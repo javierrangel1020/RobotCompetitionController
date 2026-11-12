@@ -350,6 +350,30 @@ abstract class AppLocalizations {
   /// **'Line position'**
   String get position;
 
+  /// Section title: color of the line the robot follows
+  ///
+  /// In en, this message translates to:
+  /// **'Line color'**
+  String get lineColor;
+
+  /// Black line on a white background
+  ///
+  /// In en, this message translates to:
+  /// **'Black'**
+  String get blackLine;
+
+  /// White line on a black background
+  ///
+  /// In en, this message translates to:
+  /// **'White'**
+  String get whiteLine;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Black: black line on a white background. White: white line on a black background. The robot switches right away.'**
+  String get lineColorMessage;
+
   ///
   ///
   /// In en, this message translates to:
@@ -415,6 +439,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Calibrate sensors'**
   String get calibrate;
+
+  /// Calibrate button while the robot is in calibration mode
+  ///
+  /// In en, this message translates to:
+  /// **'Finish calibration'**
+  String get finishCalibration;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Sweep every sensor over the line and over the background. The box on each bar is what that sensor has seen so far; its name turns green once it has enough contrast. Tap again to finish.'**
+  String get calibrationHint;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Calibration done'**
+  String get calibrationDone;
+
+  /// Calibration finished but some sensors never saw the line and the background
+  ///
+  /// In en, this message translates to:
+  /// **'Calibration done. No contrast (left unchanged): {sensors}'**
+  String calibrationNoContrast(String sensors);
+
+  /// Line detection threshold
+  ///
+  /// In en, this message translates to:
+  /// **'Threshold'**
+  String get threshold;
+
+  ///
+  ///
+  /// In en, this message translates to:
+  /// **'Drag the orange mark on the bars or move the slider. The green zone is what counts as line, and sensors in it turn green. Higher = more sensitive: raise it if the robot loses the line between two sensors; lower it if it mistakes the background for the line. Sent to the robot when you let go. Calibrate first.'**
+  String get thresholdMessage;
+
+  /// Label of the vertical scale of the sensor bars, followed by the range (e.g. 'Scale 0-64')
+  ///
+  /// In en, this message translates to:
+  /// **'Scale'**
+  String get scale;
 
   ///
   ///

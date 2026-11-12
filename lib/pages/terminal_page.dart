@@ -31,7 +31,10 @@ class _TerminalPageState extends State<TerminalPage> {
     LineProtocol.run(false),
     LineProtocol.sensors(true),
     LineProtocol.sensors(false),
-    LineProtocol.calibrate,
+    LineProtocol.calibration(true),
+    LineProtocol.calibration(false),
+    LineProtocol.lineColor(LineColor.black),
+    LineProtocol.lineColor(LineColor.white),
   ];
 
   static const TextStyle _mono = TextStyle(

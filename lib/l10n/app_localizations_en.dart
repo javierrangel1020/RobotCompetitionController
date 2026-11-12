@@ -139,6 +139,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get position => 'Line position';
 
   @override
+  String get lineColor => 'Line color';
+
+  @override
+  String get blackLine => 'Black';
+
+  @override
+  String get whiteLine => 'White';
+
+  @override
+  String get lineColorMessage =>
+      'Black: black line on a white background. White: white line on a black background. The robot switches right away.';
+
+  @override
   String get parameters => 'Parameters';
 
   @override
@@ -174,6 +187,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calibrate => 'Calibrate sensors';
+
+  @override
+  String get finishCalibration => 'Finish calibration';
+
+  @override
+  String get calibrationHint =>
+      'Sweep every sensor over the line and over the background. The box on each bar is what that sensor has seen so far; its name turns green once it has enough contrast. Tap again to finish.';
+
+  @override
+  String get calibrationDone => 'Calibration done';
+
+  @override
+  String calibrationNoContrast(String sensors) {
+    return 'Calibration done. No contrast (left unchanged): $sensors';
+  }
+
+  @override
+  String get threshold => 'Threshold';
+
+  @override
+  String get thresholdMessage =>
+      'Drag the orange mark on the bars or move the slider. The green zone is what counts as line, and sensors in it turn green. Higher = more sensitive: raise it if the robot loses the line between two sensors; lower it if it mistakes the background for the line. Sent to the robot when you let go. Calibrate first.';
+
+  @override
+  String get scale => 'Scale';
 
   @override
   String get start => 'Start';
